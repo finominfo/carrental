@@ -2,7 +2,7 @@ package hu.finominfo.carrental.client;
 
 import hu.finominfo.carrental.Application;
 import static hu.finominfo.carrental.Application.RANDOM;
-import hu.finominfo.carrental.services.Available;
+import hu.finominfo.carrental.services.Availability;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +19,7 @@ public class MainTester implements ListenableFutureCallback<ResponseEntity<Strin
     private final AsyncRestTemplate asynchRestTemplate;
     private final AtomicInteger operationNumber;
     private final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
-    private volatile Available lastAvailable = null;
+    private volatile Availability lastAvailable = null;
     private static volatile boolean running = true;
     
     public static void startAutoTesting() {
@@ -78,11 +78,10 @@ public class MainTester implements ListenableFutureCallback<ResponseEntity<Strin
 
     private void getAvailables() {
         try {
-            asynchRestTemplate.getForEntity(
-                    "http://localhost:" + port + "/available",
-                    Available.class).addCallback(new ListenableFutureCallback<ResponseEntity<Available>>() {
+            asynchRestTemplate.getForEntity("http://localhost:" + port + "/available",
+                    Availability.class).addCallback(new ListenableFutureCallback<ResponseEntity<Availability>>() {
                         @Override
-                        public void onSuccess(ResponseEntity<Available> t) {
+                        public void onSuccess(ResponseEntity<Availability> t) {
                             lastAvailable = t.getBody();
                             makeSchedule(1);
                         }

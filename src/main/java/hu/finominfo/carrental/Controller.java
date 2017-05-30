@@ -1,7 +1,7 @@
 package hu.finominfo.carrental;
 
 import hu.finominfo.carrental.services.Details;
-import hu.finominfo.carrental.services.Available;
+import hu.finominfo.carrental.services.Availability;
 import hu.finominfo.carrental.services.Book;
 import hu.finominfo.carrental.services.External;
 import java.util.concurrent.Callable;
@@ -22,8 +22,8 @@ public class Controller {
     }
 
     @RequestMapping(value = "/available", method = GET)
-    public Callable<Available> available() {
-        return () -> new Available();
+    public Callable<Availability> available() {
+        return () -> new Availability();
     }
 
     @RequestMapping(value = "/details", method = GET)

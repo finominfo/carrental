@@ -4,11 +4,11 @@ import hu.finominfo.carrental.Application;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Available {
+public class Availability {
 
     private final List<Long> available;
 
-    public Available() {
+    public Availability() {
         this.available = new ArrayList<>();
         long now = System.currentTimeMillis();
         Application.CARS.stream().filter((car) -> (car.getBookedUpTo() < now)).forEachOrdered((car) -> {
