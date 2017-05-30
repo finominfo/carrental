@@ -1,8 +1,11 @@
 package hu.finominfo.carrental.services;
 
 import hu.finominfo.carrental.Application;
+import hu.finominfo.carrental.data.Car;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.annotation.Resource;
 
 public class External {
 
@@ -16,6 +19,9 @@ public class External {
     private volatile int id;
     private volatile Boolean result = false;
     private volatile String error = null;
+    
+    @Resource(name="cars")
+    private List<Car> cars;
 
     private final static Random RANDOM = new Random(0xfd3456234565L);
 
@@ -48,12 +54,12 @@ public class External {
         try {
             id = Integer.valueOf(carId);
         } catch (Throwable t) {
-            error = "The given id is wrong. It shoud be a number between 0 and " + (Application.CARS.size() - 1);
+            error = "The given id is wrong. It shoud be a number between 0 and " + (cars.size() - 1);
             FOREIGN_FAILED_BECAUSE_OF_SYNTAX.incrementAndGet();
             return false;
         }
-        if (0 > id || id >= Application.CARS.size()) {
-            error = "The given id is wrong. It shoud be a number between 0 and " + (Application.CARS.size() - 1);
+        if (0 > id || id >= cars.size()) {
+            error = "The given id is wrong. It shoud be a number between 0 and " + (cars.size() - 1);
             FOREIGN_FAILED_BECAUSE_OF_SYNTAX.incrementAndGet();
             return false;
         } else {
@@ -70,7 +76,7 @@ public class External {
     }
 
     private void makeResult() {
-        if (Application.CARS.get(id).getCarDetails().getBrand().isForeignUsageEnabled()) {
+        if (cars.get(id).getCarDetails().getBrand().isForeignUsageEnabled()) {
             result = true;
             FOREIGN_SUCCESS.incrementAndGet();
         } else {

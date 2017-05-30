@@ -5,8 +5,10 @@ import hu.finominfo.carrental.data.Car;
 import hu.finominfo.carrental.enums.EuropeanCountry;
 import hu.finominfo.carrental.enums.Usage;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.annotation.Resource;
 
 public class Book {
 
@@ -26,6 +28,9 @@ public class Book {
     private volatile boolean successfulBooking = false;
     private volatile String error = null;
 
+    @Resource(name="cars")
+    private List<Car> cars;
+    
     public Book(String id, String periodInSeconds, String usageStr, String countriesStr) {
         BOOKING_REQUESTS.incrementAndGet();
         BOOKING_REQUESTS_IN_PROGRESS.incrementAndGet();
@@ -78,12 +83,12 @@ public class Book {
         try {
             id = Integer.valueOf(carId);
         } catch (Throwable t) {
-            error = "The given id is wrong. It shoud be a number between 0 and " + (Application.CARS.size() - 1);
+            error = "The given id is wrong. It shoud be a number between 0 and " + (cars.size() - 1);
             BOOKING_FAILED_BECAUSE_OF_SYNTAX.incrementAndGet();
             return false;
         }
-        if (0 > id || id >= Application.CARS.size()) {
-            error = "The given id is wrong. It shoud be a number between 0 and " + (Application.CARS.size() - 1);
+        if (0 > id || id >= cars.size()) {
+            error = "The given id is wrong. It shoud be a number between 0 and " + (cars.size() - 1);
             BOOKING_FAILED_BECAUSE_OF_SYNTAX.incrementAndGet();
             return false;
         } else {
@@ -142,7 +147,7 @@ public class Book {
     }
 
     private boolean checkFree() {
-        long bookedUpTo = Application.CARS.get(id).getBookedUpTo();
+        long bookedUpTo = cars.get(id).getBookedUpTo();
         long now = System.currentTimeMillis();
         if (now < bookedUpTo) {
             error = "The car will probably be free in " + (int) ((bookedUpTo - now + 500) / 1000) + " seconds.";
@@ -156,7 +161,7 @@ public class Book {
         if (!usage.equals(Usage.FOREIGN)) {
             return true;
         }
-        External external = Application.REST_TEMPLATE.getForObject("http://localhost:" + Application.port + "/external?id=" + Application.CARS.get(id).getId(), External.class);
+        External external = Application.REST_TEMPLATE.getForObject("http://localhost:" + Application.port + "/external?id=" + cars.get(id).getId(), External.class);
         if (!external.getResult()) {
             BOOKING_FAILED_BECAUSE_OF_FOREIGN.incrementAndGet();
             error = external.getError();
@@ -167,7 +172,7 @@ public class Book {
 
     private void tryToBook() {
         long now = System.currentTimeMillis();
-        Car car = Application.CARS.get(id);
+        Car car = cars.get(id);
         if (car.getBookedUpTo() < now) {
             try {
                 car.getLock().lock();
