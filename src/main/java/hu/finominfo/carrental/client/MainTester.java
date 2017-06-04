@@ -1,13 +1,21 @@
 package hu.finominfo.carrental.client;
 
 import hu.finominfo.carrental.Application;
+import static hu.finominfo.carrental.Application.NUMBER_OF_CARS;
 import static hu.finominfo.carrental.Application.RANDOM;
+import hu.finominfo.carrental.data.Car;
+import hu.finominfo.carrental.enums.Brand;
+import hu.finominfo.carrental.enums.Color;
 import hu.finominfo.carrental.services.Availability;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.client.AsyncRestTemplate;
@@ -21,7 +29,7 @@ public class MainTester implements ListenableFutureCallback<ResponseEntity<Strin
     private final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
     private volatile Availability lastAvailable = null;
     private static volatile boolean running = true;
-    
+
     public static void startAutoTesting() {
         running = true;
     }
@@ -35,7 +43,6 @@ public class MainTester implements ListenableFutureCallback<ResponseEntity<Strin
         asynchRestTemplate = new AsyncRestTemplate();
         operationNumber = new AtomicInteger(0);
     }
-    
 
     @Override
     public void run() {

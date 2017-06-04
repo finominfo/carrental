@@ -1,10 +1,19 @@
 package hu.finominfo.carrental;
 
+import static hu.finominfo.carrental.Application.NUMBER_OF_CARS;
+import static hu.finominfo.carrental.Application.RANDOM;
+import hu.finominfo.carrental.data.Car;
+import hu.finominfo.carrental.enums.Brand;
+import hu.finominfo.carrental.enums.Color;
 import hu.finominfo.carrental.services.Details;
 import hu.finominfo.carrental.services.Availability;
 import hu.finominfo.carrental.services.Book;
 import hu.finominfo.carrental.services.External;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class Controller {
 
+    
     private static final String NULL = "null";
     private static final String MINUS = "-1";
 

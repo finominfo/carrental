@@ -7,9 +7,9 @@ import javax.annotation.Resource;
 
 public class Availability {
 
-    @Resource(name="cars")
+    @Resource(name = "cars")
     private List<Car> cars;
-    
+
     private final List<Long> available;
 
     public Availability() {
